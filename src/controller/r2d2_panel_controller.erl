@@ -1,4 +1,4 @@
--module(r2d2_panel_controller, [Req]).
+-module(r2d2_panel_controller, [Req, SessionID]).
 -compile(export_all).
 
 
