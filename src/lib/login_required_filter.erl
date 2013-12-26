@@ -15,13 +15,33 @@ before_filter(Config, RequestContext) ->
         true ->
             {ok, RequestContext};
         false ->
-            case get_nested_value(RequestContext, [session_id, username]) of
-                undefined ->
-                    %%redirect_to_login(Config);
-                    {ok, RequestContext};
-                Username ->
+            case user_in_session(RequestContext) of
+                false ->
+                    redirect_to_login(Config);
+                true ->
                     {ok, RequestContext}
             end
+    end.
+
+user_in_session(RequestContext) ->
+    %% Check if user in session
+    case boss_session:get_session_data(filter_get_session_id(RequestContext), username) of
+        undefined ->
+            false;
+        {error, _} ->
+            false;
+        Username ->
+            true
+    end.
+
+filter_get_session_id(RequestContext) ->
+    %% Get session_id from requestContext or Cookies
+    case proplists:get_value(session_id, RequestContext) of
+        undefined ->
+            %% Try loading session_id from request, using boss_web_controller
+            boss_web_controller:generate_session_id(proplists:get_value(request, RequestContext));
+        SessionID ->
+            SessionID
     end.
 
 get_nested_value(undefined, _) ->
