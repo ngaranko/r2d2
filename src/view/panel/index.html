@@ -1,5 +1,36 @@
 {% extends 'panel/base.html' %}
 
 {% block content %}
-Heeey! Im index!
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
+<script type="text/javascript">
+function enc() {
+var text = document.getElementById('text').value;
+var pass = document.getElementById('pass').value;
+var result = document.getElementById('result');
+
+var encrypted = CryptoJS.AES.encrypt(text, pass);
+
+result.innerHTML = encrypted;
+}
+
+function dec() {
+var pass = document.getElementById('pass').value;
+var result = document.getElementById('result');
+
+var decrypted = CryptoJS.AES.decrypt(result.innerHTML, pass);
+document.getElementById('text').value = decrypted.toString(CryptoJS.enc.Utf8);
+}
+</script>
+
+<textarea id="text"></textarea>
+<input type="pass" id="pass" value="" />
+<a href="javascript:enc(0)">Encrypt</a>
+<a href="javascript:dec(0)">Decrypt</a>
+
+<div id="result"></div>
+
+
+{% for entry in entries %}
+ {{ entry.title }}
+{% endfor %}
 {% endblock %}
