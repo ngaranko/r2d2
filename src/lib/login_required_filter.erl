@@ -17,7 +17,7 @@ before_filter(Config, RequestContext) ->
         false ->
             case user_in_session(RequestContext) of
                 false ->
-                    redirect_to_login(Config);
+                    {redirect_to_login(Config), RequestContext};
                 true ->
                     {ok, RequestContext}
             end
@@ -30,7 +30,7 @@ user_in_session(RequestContext) ->
             false;
         {error, _} ->
             false;
-        Username ->
+        _ ->
             true
     end.
 
@@ -43,13 +43,6 @@ filter_get_session_id(RequestContext) ->
         SessionID ->
             SessionID
     end.
-
-get_nested_value(undefined, _) ->
-    undefined;
-get_nested_value(Data, []) ->
-    Data;
-get_nested_value(Data, [Key | Keys]) ->
-    get_nested_value(proplists:get_value(Key, Data), Keys).
 
 redirect_to_login(Config) ->
     {redirect, proplists:get_value(login_uri, Config, "/public/login")}.

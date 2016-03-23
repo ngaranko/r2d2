@@ -33,8 +33,8 @@ errors() ->
     Errors.
 
 fields() ->
+    io:format("FIELDS: ~p~n~n~n", [form_fields()]),
     boss_form:fields(form_fields(), InitialData, Errors).
 
 as_table() ->
     boss_form:as_table(form_fields(), InitialData, Errors).
-
