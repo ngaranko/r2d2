@@ -25,7 +25,7 @@ before_filter(Config, RequestContext) ->
 
 user_in_session(RequestContext) ->
     %% Check if user in session
-    case boss_session:get_session_data(filter_get_session_id(RequestContext), username) of
+    case boss_session:get_session_data(filter_get_session_id(RequestContext), user_id) of
         undefined ->
             false;
         {error, _} ->
@@ -45,4 +45,4 @@ filter_get_session_id(RequestContext) ->
     end.
 
 redirect_to_login(Config) ->
-    {redirect, proplists:get_value(login_uri, Config, "/public/login")}.
+    {redirect, proplists:get_value(login_uri, Config, "/login")}.

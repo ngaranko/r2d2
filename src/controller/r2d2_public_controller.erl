@@ -9,22 +9,27 @@ index('POST', [], Context) ->
 
 
 login('GET', [], Context) ->
-    case proplists:get_value(username, boss_session:get_session_data(SessionID)) of
+    case proplists:get_value(user_id, boss_session:get_session_data(SessionID)) of
         undefined ->
             Form = boss_form:new(login_form, []),
-            io:format("FORM: ~p~n~n", [Form:fields()]),
-            {{ok, [{a, 'b'}, {form, Form}]}, Context};
+            {{ok, [{form, Form}]}, Context};
         _ ->
             {{redirect, "/panel"}, Context}
     end;
 
 login('POST', [], Context) ->
     Form = boss_form:new(login_form, []),
-    io:format('12331'),
     case boss_form:validate(Form, Req:post_params()) of
         {ok, CleanedData} ->
-            boss_session:set_session_data(SessionID, username, proplists:get_value(username, CleanedData)),
-            {{redirect, "/panel"}, Context};
+            Username = binary_to_list(proplists:get_value(username, CleanedData)),
+            Password = binary_to_list(proplists:get_value(password, CleanedData)),
+            case user_lib:check_credentials(Username, Password) of
+                false ->
+                    {{ok, [{form, Form}, {login_error, 1} | Context]}, Context};
+                Account ->
+                    boss_session:set_session_data(SessionID, user_id, Account:id()),
+                    {{redirect, "/panel"}, Context}
+            end;
         {error, FormWithErrors} ->
             {{ok, [{form, FormWithErrors} | Context]}, Context}
     end.

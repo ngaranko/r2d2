@@ -9,8 +9,12 @@
     {{ csrf_token|safe }}
   <h2 class="form-signin-heading">Please sign in</h2>
   {% for error, text in form.errors %}
-  {{ error }}: {{ text }}<br />
+
+  <p class="text-danger">{{ error }}: {{ text }}.</p>
   {% endfor %}
+  {% if login_error %}
+  <p class="text-danger">Incorrect credentials.</p>
+  {% endif %}
   {% for field in form.fields %}
       <div class="{% if field.errors %} has-error{% endif %}">
           {{ field.html|safe }}
